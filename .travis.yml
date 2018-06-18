@@ -1,17 +1,5 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-language: r
-cache: packages
-sudo: false
-r_check_args: --as-cran
 
-r_packages:
- - devtools
- - ape
- - covr
- - memoise
- - phangorn
- - R.cache
- - Rdpack
- - roxygen2
- - testthat
- -readr
+language: R
+sudo: false
+cache: packages
