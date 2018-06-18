@@ -2,11 +2,7 @@
 language: r
 cache: packages
 sudo: false
-warnings_are_errors: true
 r_check_args: --as-cran
-
-git:
-  depth: 5
 
 r_packages:
  - devtools
@@ -19,9 +15,3 @@ r_packages:
  - roxygen2
  - testthat
  -readr
-
-before_script:
- - R -e "devtools::document()"
-
-after_success:
-  - Rscript -e "covr::codecov()"
