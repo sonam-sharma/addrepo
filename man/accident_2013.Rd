@@ -18,7 +18,7 @@
   \item{COUNTY}{ County}
   \item{CITY}{ City}
   \item{DAY}{Day of crash}
-  \item{MONTH}{month of crash}
+  \item{MONTH}{month of cras}
   \item{YEAR}{year of Crash}
   \item{DAY_WEEK}{day of week}
   \item{HOUR}{hour of crash}
