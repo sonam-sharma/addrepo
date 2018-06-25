@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sonam Sharma" />
 
-<meta name="date" content="2018-06-19" />
+<meta name="date" content="2018-06-25" />
 
 <title>myvignette</title>
 
@@ -70,39 +70,42 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">myvignette</h1>
 <h4 class="author"><em>Sonam Sharma</em></h4>
-<h4 class="date"><em>2018-06-19</em></h4>
+<h4 class="date"><em>2018-06-25</em></h4>
 
 
 
 <div id="reading-the-input-file-if-it-exists-at-the-given-path" class="section level2">
 <h2>Reading the input file ,if it exists at the given path</h2>
 <p>This function checks whether a given file exists or not. If the file exists , it reads the file into a data frame. Otherwise it throws an error with the message “File <filename> does not exists”. R will check the given file in the current working directory so ensure the file is present at the current working directory. This function uses two packages <strong>readr</strong> for <em>read_csv</em> to read a csv file and <strong>dplyr</strong> for <em>tbl_df</em> to convert data to data frame.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)</code></pre></div>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list.files</span>()</code></pre></div>
-<pre><code>## [1] &quot;accident_2013.csv&quot; &quot;accident_2014.csv&quot; &quot;accident_2015.csv&quot;
-## [4] &quot;myvignette.R&quot;      &quot;myvignette.Rmd&quot;    &quot;myvignette.html&quot;</code></pre>
+<pre><code>## [1] &quot;myvignette.R&quot;    &quot;myvignette.Rmd&quot;  &quot;myvignette.html&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.exists</span>(<span class="st">&quot;accident_2013.csv&quot;</span>)</code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fars_read &lt;-<span class="st"> </span><span class="cf">function</span>(filename) {
-  <span class="kw">list.files</span>()
-  <span class="cf">if</span>(<span class="op">!</span><span class="kw">file.exists</span>(filename))
-    <span class="kw">stop</span>(<span class="st">&quot;file '&quot;</span>, filename, <span class="st">&quot;' does not exist&quot;</span>)
-  data &lt;-<span class="st"> </span><span class="kw">suppressMessages</span>({
-     readr<span class="op">::</span><span class="kw">read_csv</span>(filename, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
-   
-    
+ 
+ <span class="co"># if(!file.exists(filename))</span>
+  <span class="co">#  stop(&quot;file '&quot;, filename, &quot;' does not exist&quot;)</span>
+  data1 &lt;-<span class="st"> </span><span class="kw">suppressMessages</span>({
+ <span class="kw">lapply</span>(<span class="kw">list.files</span>(<span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="dt">package =</span> <span class="st">'mynewpackage'</span>), <span class="dt">full.names =</span> <span class="ot">TRUE</span>), read.csv)
   })
-   dplyr<span class="op">::</span><span class="kw">tbl_df</span>(data)
-  
+ <span class="kw">class</span>(data1)
+
+   <span class="kw">head</span>(data1)  
+ data2&lt;-<span class="kw">as.data.frame</span>(data1) 
+  dplyr<span class="op">::</span><span class="kw">tbl_df</span>(data2)
 }
-<span class="kw">head</span>(data)</code></pre></div>
-<pre><code>##                                                                      
-## 1 function (..., list = character(), package = NULL, lib.loc = NULL, 
-## 2     verbose = getOption(&quot;verbose&quot;), envir = .GlobalEnv)            
-## 3 {                                                                  
-## 4     fileExt &lt;- function(x) {                                       
-## 5         db &lt;- grepl(&quot;\\\\.[^.]+\\\\.(gz|bz2|xz)$&quot;, x)              
-## 6         ans &lt;- sub(&quot;.*\\\\.&quot;, &quot;&quot;, x)</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"> <span class="kw">fars_read</span>(<span class="st">&quot;accident_2013.csv&quot;</span>)</code></pre></div>
+
+<span class="co">#head(data1)</span>
+<span class="kw">fars_read</span>(<span class="st">&quot;accident_2013.csv&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 30,202 x 50
 ##    STATE ST_CASE VE_TOTAL VE_FORMS PVH_INVL  PEDS PERNOTMVIT PERMVIT
 ##    &lt;int&gt;   &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt; &lt;int&gt;      &lt;int&gt;   &lt;int&gt;
@@ -119,11 +122,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## # ... with 30,192 more rows, and 42 more variables: PERSONS &lt;int&gt;,
 ## #   COUNTY &lt;int&gt;, CITY &lt;int&gt;, DAY &lt;int&gt;, MONTH &lt;int&gt;, YEAR &lt;int&gt;,
 ## #   DAY_WEEK &lt;int&gt;, HOUR &lt;int&gt;, MINUTE &lt;int&gt;, NHS &lt;int&gt;, ROAD_FNC &lt;int&gt;,
-## #   ROUTE &lt;int&gt;, TWAY_ID &lt;chr&gt;, TWAY_ID2 &lt;chr&gt;, MILEPT &lt;int&gt;,
+## #   ROUTE &lt;int&gt;, TWAY_ID &lt;fct&gt;, TWAY_ID2 &lt;fct&gt;, MILEPT &lt;int&gt;,
 ## #   LATITUDE &lt;dbl&gt;, LONGITUD &lt;dbl&gt;, SP_JUR &lt;int&gt;, HARM_EV &lt;int&gt;,
 ## #   MAN_COLL &lt;int&gt;, RELJCT1 &lt;int&gt;, RELJCT2 &lt;int&gt;, TYP_INT &lt;int&gt;,
 ## #   WRK_ZONE &lt;int&gt;, REL_ROAD &lt;int&gt;, LGT_COND &lt;int&gt;, WEATHER1 &lt;int&gt;,
-## #   WEATHER2 &lt;int&gt;, WEATHER &lt;int&gt;, SCH_BUS &lt;int&gt;, RAIL &lt;chr&gt;,
+## #   WEATHER2 &lt;int&gt;, WEATHER &lt;int&gt;, SCH_BUS &lt;int&gt;, RAIL &lt;fct&gt;,
 ## #   NOT_HOUR &lt;int&gt;, NOT_MIN &lt;int&gt;, ARR_HOUR &lt;int&gt;, ARR_MIN &lt;int&gt;,
 ## #   HOSP_HR &lt;int&gt;, HOSP_MN &lt;int&gt;, CF1 &lt;int&gt;, CF2 &lt;int&gt;, CF3 &lt;int&gt;,
 ## #   FATALS &lt;int&gt;, DRUNK_DR &lt;int&gt;</code></pre>
@@ -134,7 +137,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">make_filename &lt;-<span class="st"> </span><span class="cf">function</span>(year) {
   year &lt;-<span class="st"> </span><span class="kw">as.integer</span>(year)
   <span class="kw">sprintf</span>(<span class="st">&quot;accident_%d.csv&quot;</span>, year)
-}</code></pre></div>
+
+}
+<span class="kw">make_filename</span>(<span class="dv">2013</span>)</code></pre></div>
+<pre><code>## [1] &quot;accident_2013.csv&quot;</code></pre>
 </div>
 <div id="selecting-and-printing-the-months-present-in-the-input-file-for-the-given-year." class="section level2">
 <h2>Selecting and printing the months present in the input file for the given year.</h2>
@@ -142,27 +148,62 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fars_read_years &lt;-<span class="st"> </span><span class="cf">function</span>(years) {
   <span class="kw">lapply</span>(years, <span class="cf">function</span>(year) {
     file &lt;-<span class="st"> </span><span class="kw">make_filename</span>(year)
+    
     <span class="kw">tryCatch</span>({
-      dat &lt;-<span class="st"> </span><span class="kw">fars_read</span>(file)
-      dplyr<span class="op">::</span><span class="kw">mutate_</span>(<span class="op">~</span>dat, <span class="dt">year =</span> <span class="op">~</span>year) <span class="op">%&gt;%</span>
+     dat &lt;-<span class="st"> </span><span class="kw">fars_read</span>(file)
+    dat<span class="op">%&gt;%</span>dplyr<span class="op">::</span><span class="kw">mutate_</span>( <span class="dt">year =</span> <span class="op">~</span>year) <span class="op">%&gt;%</span>
 <span class="st">        </span>dplyr<span class="op">::</span><span class="kw">select_</span>(<span class="op">~</span>MONTH, <span class="op">~</span>year)
-    }, <span class="dt">error =</span> <span class="cf">function</span>(e) {
+     
+    }, 
+    <span class="dt">error =</span> <span class="cf">function</span>(e) {
       <span class="kw">warning</span>(<span class="st">&quot;invalid year: &quot;</span>, year)
       <span class="kw">return</span>(<span class="ot">NULL</span>)
     })
   })
-}</code></pre></div>
+}
+<span class="kw">fars_read_years</span>(<span class="dv">2013</span>)</code></pre></div>
+<pre><code>## [[1]]
+## # A tibble: 30,202 x 2
+##    MONTH  year
+##    &lt;int&gt; &lt;dbl&gt;
+##  1     1 2013.
+##  2     1 2013.
+##  3     1 2013.
+##  4     1 2013.
+##  5     1 2013.
+##  6     1 2013.
+##  7     1 2013.
+##  8     1 2013.
+##  9     1 2013.
+## 10     1 2013.
+## # ... with 30,192 more rows</code></pre>
 </div>
 <div id="total-number-of-accidental-injuries-based-on-month-for-the-given-year." class="section level2">
 <h2>Total number of accidental injuries based on month for the given year.</h2>
 <p>This function reads the input file for the year provided by the user and then returns the number of observation for each month of the given year.If the year provided by user is not a valid year,this function will throw an error.Package imported by this function is <strong>dplyr</strong> for <em>bind_rows</em>, <em>group_by</em> and <em>summarize</em> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fars_summarize_years &lt;-<span class="st"> </span><span class="cf">function</span>(years) {
   dat_list &lt;-<span class="st"> </span><span class="kw">fars_read_years</span>(years)
-  dplyr<span class="op">::</span><span class="kw">bind_rows</span>(<span class="op">~</span>dat_list) <span class="op">%&gt;%</span>
+  dplyr<span class="op">::</span><span class="kw">bind_rows</span>(dat_list) <span class="op">%&gt;%</span>
 <span class="st">    </span>dplyr<span class="op">::</span><span class="kw">group_by_</span>(<span class="op">~</span>year, <span class="op">~</span>MONTH) <span class="op">%&gt;%</span>
 <span class="st">    </span>dplyr<span class="op">::</span><span class="kw">summarize_</span>(<span class="dt">n =</span> <span class="op">~</span><span class="kw">n</span>()) <span class="op">%&gt;%</span>
 <span class="st">    </span>tidyr<span class="op">::</span><span class="kw">spread_</span>(<span class="dt">key_col=</span><span class="st">'year'</span>,<span class="dt">value_col=</span><span class="st">'n'</span>)
-}</code></pre></div>
+}
+<span class="kw">fars_summarize_years</span>(<span class="dv">2013</span>)</code></pre></div>
+<pre><code>## # A tibble: 12 x 2
+##    MONTH `2013`
+##    &lt;int&gt;  &lt;int&gt;
+##  1     1   2230
+##  2     2   1952
+##  3     3   2356
+##  4     4   2300
+##  5     5   2532
+##  6     6   2692
+##  7     7   2660
+##  8     8   2899
+##  9     9   2741
+## 10    10   2768
+## 11    11   2615
+## 12    12   2457</code></pre>
 </div>
 <div id="draws-a-geographical-map-for-the-accidental-injuries-for-the-given-state-and-year." class="section level2">
 <h2>Draws a geographical map for the accidental injuries for the given state and year.</h2>
@@ -172,8 +213,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   data &lt;-<span class="st"> </span><span class="kw">fars_read</span>(filename)
   state.num &lt;-<span class="st"> </span><span class="kw">as.integer</span>(state.num)
 
-  <span class="cf">if</span>(<span class="op">!</span>(state.num <span class="op">%in%</span><span class="st"> </span><span class="kw">unique</span>(data<span class="op">$</span>STATE)))
-    <span class="kw">stop</span>(<span class="st">&quot;invalid STATE number: &quot;</span>, state.num)
+ <span class="co"># if(!(state.num %in% unique(data[&quot;STATE&quot;])))</span>
+  <span class="co">#  stop(&quot;invalid STATE number: &quot;, state.num)</span>
   data.sub &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter_</span>(data, <span class="op">~</span>STATE <span class="op">==</span><span class="st"> </span>state.num)
   <span class="cf">if</span>(<span class="kw">nrow</span>(data.sub) <span class="op">==</span><span class="st"> </span>0L) {
     <span class="kw">message</span>(<span class="st">&quot;no accidents to plot&quot;</span>)

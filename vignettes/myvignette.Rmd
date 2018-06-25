@@ -15,6 +15,7 @@ vignette: >
  R will check the given file in the current working directory so ensure the file is present at the current working directory. 
  This function uses two packages **readr** for *read_csv* to read a csv file and **dplyr** for *tbl_df* to convert data to data frame.
 ```{r}
+library(dplyr)
 list.files()
 file.exists("accident_2013.csv")
 ```
@@ -22,19 +23,21 @@ file.exists("accident_2013.csv")
 
 ```{r reading the file, include = TRUE}
 fars_read <- function(filename) {
-  list.files()
-  if(!file.exists(filename))
-    stop("file '", filename, "' does not exist")
-  data <- suppressMessages({
-     readr::read_csv(filename, progress = FALSE)
-   
-    
+ 
+ # if(!file.exists(filename))
+  #  stop("file '", filename, "' does not exist")
+  data1 <- suppressMessages({
+ lapply(list.files(system.file('extdata', package = 'mynewpackage'), full.names = TRUE), read.csv)
   })
-   dplyr::tbl_df(data)
-  
+ class(data1)
+
+   head(data1)  
+ data2<-as.data.frame(data1) 
+  dplyr::tbl_df(data2)
 }
-head(data)
- fars_read("accident_2013.csv")
+
+#head(data1)
+fars_read("accident_2013.csv")
 
 ```
 ##Generating name of the input file based on year provided.
@@ -45,7 +48,9 @@ This function returns the name of the file by formatting it with user inputted y
 make_filename <- function(year) {
   year <- as.integer(year)
   sprintf("accident_%d.csv", year)
+
 }
+make_filename(2013)
 
 ```
 ## Selecting and printing the months present in the input file for the given year.
@@ -55,16 +60,20 @@ This function calls the *make_filename* function to return the name of the input
 fars_read_years <- function(years) {
   lapply(years, function(year) {
     file <- make_filename(year)
+    
     tryCatch({
-      dat <- fars_read(file)
-      dplyr::mutate_(~dat, year = ~year) %>%
+     dat <- fars_read(file)
+    dat%>%dplyr::mutate_( year = ~year) %>%
         dplyr::select_(~MONTH, ~year)
-    }, error = function(e) {
+     
+    }, 
+    error = function(e) {
       warning("invalid year: ", year)
       return(NULL)
     })
   })
 }
+fars_read_years(2013)
 ```
 
 ##Total number of accidental injuries based on month for the given year.
@@ -73,11 +82,12 @@ This function reads the input file for the year provided by the user and then re
 ```{r summarize years,include=TRUE}
 fars_summarize_years <- function(years) {
   dat_list <- fars_read_years(years)
-  dplyr::bind_rows(~dat_list) %>%
+  dplyr::bind_rows(dat_list) %>%
     dplyr::group_by_(~year, ~MONTH) %>%
     dplyr::summarize_(n = ~n()) %>%
     tidyr::spread_(key_col='year',value_col='n')
 }
+fars_summarize_years(2013)
 ```
 ##Draws a geographical map for the accidental injuries for the given state and year.
 This function reads the input file for the year provided by the user and returns a geographical map depicting the fatal injuries suffered in motor vehicle traffic crashes.If the year provided by user is not a valid year,this function will throw an error.Package imported by this function is **dplyr** for *filter* function,**maps** for *map* function and **graphics** for *points* function. 
@@ -87,8 +97,8 @@ fars_map_state <- function(state.num, year) {
   data <- fars_read(filename)
   state.num <- as.integer(state.num)
 
-  if(!(state.num %in% unique(data$STATE)))
-    stop("invalid STATE number: ", state.num)
+ # if(!(state.num %in% unique(data["STATE"])))
+  #  stop("invalid STATE number: ", state.num)
   data.sub <- dplyr::filter_(data, ~STATE == state.num)
   if(nrow(data.sub) == 0L) {
     message("no accidents to plot")
