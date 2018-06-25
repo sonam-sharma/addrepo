@@ -33,6 +33,7 @@ make_filename(2013)
 
 ## ----return year and month,include=TRUE----------------------------------
 fars_read_years <- function(years) {
+  file<-dat<-MONTH<-NULL
   lapply(years, function(year) {
     file <- make_filename(year)
     

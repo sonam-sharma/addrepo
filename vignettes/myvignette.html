@@ -146,6 +146,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Selecting and printing the months present in the input file for the given year.</h2>
 <p>This function calls the <em>make_filename</em> function to return the name of the input file. It then reads the file and select and return the year and month present in the file for that year. If the year provided by user is not a valid year. it will throw an error. Package imported by this function is <strong>dplyr</strong> for <em>mutate</em> and <em>select</em> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fars_read_years &lt;-<span class="st"> </span><span class="cf">function</span>(years) {
+  file&lt;-dat&lt;-MONTH&lt;-<span class="ot">NULL</span>
   <span class="kw">lapply</span>(years, <span class="cf">function</span>(year) {
     file &lt;-<span class="st"> </span><span class="kw">make_filename</span>(year)
     

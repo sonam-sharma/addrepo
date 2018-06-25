@@ -58,7 +58,7 @@ This function calls the *make_filename* function to return the name of the input
 
 ```{r return year and month,include=TRUE}
 fars_read_years <- function(years) {
-  file<-dat<-NULL
+  file<-dat<-MONTH<-NULL
   lapply(years, function(year) {
     file <- make_filename(year)
     
