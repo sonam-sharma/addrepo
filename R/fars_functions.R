@@ -17,12 +17,17 @@
 #' @export
 
 fars_read <- function(filename) {
-  if(!file.exists(filename))
-    stop("file '", filename, "' does not exist")
-  data <- suppressMessages({
-    readr::read_csv(filename, progress = FALSE)
+  # if(!file.exists(filename))
+  #  stop("file '", filename, "' does not exist")
+  data1 <- suppressMessages({
+    lapply(list.files(system.file('extdata', package = 'mynewpackage'), full.names = TRUE), read.csv)
   })
-  dplyr::tbl_df(data)
+  class(data1)
+
+  head(data1)
+  data2<-as.data.frame(data1)
+  dplyr::tbl_df(data2)
+
 }
 #' @title Generating name of the input file based on year provided.
 #' @description This function returns the name of the file by formatting it with user supplied
@@ -53,13 +58,17 @@ make_filename <- function(year) {
 #' fars_read_years(2015)
 #' @export
 fars_read_years <- function(years) {
+  lfile<-dat<-MONTH<-NULL
   lapply(years, function(year) {
     file <- make_filename(year)
+
     tryCatch({
       dat <- fars_read(file)
-      dplyr::mutate(dat, year = year) %>%
-        dplyr::select(MONTH, year)
-    }, error = function(e) {
+      dat%>%dplyr::mutate_( year = ~year) %>%
+        dplyr::select_(~MONTH, ~year)
+
+    },
+    error = function(e) {
       warning("invalid year: ", year)
       return(NULL)
     })
@@ -81,9 +90,9 @@ fars_read_years <- function(years) {
 fars_summarize_years <- function(years) {
   dat_list <- fars_read_years(years)
   dplyr::bind_rows(dat_list) %>%
-    dplyr::group_by(year, MONTH) %>%
-    dplyr::summarize(n = n()) %>%
-    tidyr::spread(year, n)
+    dplyr::group_by_(~year, ~MONTH) %>%
+    dplyr::summarize_(n = ~n()) %>%
+    tidyr::spread_(key_col='year',value_col='n')
 }
 
 
@@ -109,9 +118,9 @@ fars_map_state <- function(state.num, year) {
   data <- fars_read(filename)
   state.num <- as.integer(state.num)
 
-  if(!(state.num %in% unique(data$STATE)))
-    stop("invalid STATE number: ", state.num)
-  data.sub <- dplyr::filter(data, STATE == state.num)
+  # if(!(state.num %in% unique(data["STATE"])))
+  #  stop("invalid STATE number: ", state.num)
+  data.sub <- dplyr::filter_(data, ~STATE == state.num)
   if(nrow(data.sub) == 0L) {
     message("no accidents to plot")
     return(invisible(NULL))
