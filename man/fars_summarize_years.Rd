@@ -26,5 +26,4 @@ this function will throw an error if the year provided by user is not a valid ye
 }
 \examples{
 fars_summarize_years(2013)
-fars_summarize_years(2015)
 }

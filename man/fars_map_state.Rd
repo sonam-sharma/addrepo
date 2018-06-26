@@ -30,5 +30,4 @@ valid year look at parameter 'year'.
 }
 \examples{
 fars_map_state(1,2013)
-fars_map_state(2,2015)
 }

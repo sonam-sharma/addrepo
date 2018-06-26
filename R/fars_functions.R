@@ -11,22 +11,21 @@
 #' @importFrom dplyr tbl_df
 #' @examples
 #' fars_read("accident_2013.csv")
-#' fars_read("accident_2015.csv")
-#' data1<-"data/accident.csv"
-#' fars_read(data1)
 #' @export
 
 fars_read <- function(filename) {
-  # if(!file.exists(filename))
-  #  stop("file '", filename, "' does not exist")
-  data1 <- suppressMessages({
-    lapply(list.files(system.file('extdata', package = 'mynewpackage'), full.names = TRUE), read.csv)
-  })
-  class(data1)
+    tryCatch({
+      data1 <- suppressMessages({
+        lapply(system.file('extdata', filename, package = 'mynewpackage'), read.csv)
+      })
+    },
+    error = function(e) {
+      stop("file '", filename, "' does not exist")
+    })
 
-  head(data1)
-  data2<-as.data.frame(data1)
-  dplyr::tbl_df(data2)
+
+    data2<-as.data.frame(data1)
+    dplyr::tbl_df(data2)
 
 }
 #' @title Generating name of the input file based on year provided.
@@ -39,7 +38,6 @@ fars_read <- function(filename) {
 #' make_filename(2013)
 #' yr<-2013
 #' make_filename(yr)
-#' make_filename(2015)
 #' @export
 
 make_filename <- function(year) {
@@ -55,7 +53,6 @@ make_filename <- function(year) {
 #' @importFrom dplyr mutate select
 #' @examples
 #' fars_read_years(2013)
-#' fars_read_years(2015)
 #' @export
 fars_read_years <- function(years) {
   lfile<-dat<-MONTH<-NULL
@@ -85,7 +82,6 @@ fars_read_years <- function(years) {
 #' @importFrom tidyr spread
 #' @examples
 #' fars_summarize_years(2013)
-#' fars_summarize_years(2015)
 #' @export
 fars_summarize_years <- function(years) {
   dat_list <- fars_read_years(years)
@@ -111,7 +107,6 @@ fars_summarize_years <- function(years) {
 #' @importFrom graphics points
 #' @examples
 #' fars_map_state(1,2013)
-#' fars_map_state(2,2015)
 #' @export
 fars_map_state <- function(state.num, year) {
   filename <- make_filename(year)

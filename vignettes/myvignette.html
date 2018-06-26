@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sonam Sharma" />
 
-<meta name="date" content="2018-06-25" />
+<meta name="date" content="2018-06-26" />
 
 <title>myvignette</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">myvignette</h1>
 <h4 class="author"><em>Sonam Sharma</em></h4>
-<h4 class="date"><em>2018-06-25</em></h4>
+<h4 class="date"><em>2018-06-26</em></h4>
 
 
 
@@ -92,14 +92,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## [1] FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fars_read &lt;-<span class="st"> </span><span class="cf">function</span>(filename) {
  
- <span class="co"># if(!file.exists(filename))</span>
-  <span class="co">#  stop(&quot;file '&quot;, filename, &quot;' does not exist&quot;)</span>
+   <span class="kw">tryCatch</span>({
   data1 &lt;-<span class="st"> </span><span class="kw">suppressMessages</span>({
- <span class="kw">lapply</span>(<span class="kw">list.files</span>(<span class="kw">system.file</span>(<span class="st">'extdata'</span>, <span class="dt">package =</span> <span class="st">'mynewpackage'</span>), <span class="dt">full.names =</span> <span class="ot">TRUE</span>), read.csv)
+ <span class="kw">lapply</span>(<span class="kw">system.file</span>(<span class="st">'extdata'</span>, filename, <span class="dt">package =</span> <span class="st">'mynewpackage'</span>), read.csv)
   })
- <span class="kw">class</span>(data1)
+  },
+  <span class="dt">error =</span> <span class="cf">function</span>(e) {
+      <span class="kw">stop</span>(<span class="st">&quot;file '&quot;</span>, filename, <span class="st">&quot;' does not exist&quot;</span>)
+  })
+  
 
-   <span class="kw">head</span>(data1)  
  data2&lt;-<span class="kw">as.data.frame</span>(data1) 
   dplyr<span class="op">::</span><span class="kw">tbl_df</span>(data2)
 }

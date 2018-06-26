@@ -25,7 +25,4 @@ directory or the complete filename is not provided, this function will throw an 
 }
 \examples{
 fars_read("accident_2013.csv")
-fars_read("accident_2015.csv")
-data1<-"data/accident.csv"
-fars_read(data1)
 }

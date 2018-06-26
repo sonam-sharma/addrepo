@@ -6,14 +6,16 @@ file.exists("accident_2013.csv")
 ## ----reading the file, include = TRUE------------------------------------
 fars_read <- function(filename) {
  
- # if(!file.exists(filename))
-  #  stop("file '", filename, "' does not exist")
+   tryCatch({
   data1 <- suppressMessages({
- lapply(list.files(system.file('extdata', package = 'mynewpackage'), full.names = TRUE), read.csv)
+ lapply(system.file('extdata', filename, package = 'mynewpackage'), read.csv)
   })
- class(data1)
+  },
+  error = function(e) {
+      stop("file '", filename, "' does not exist")
+  })
+  
 
-   head(data1)  
  data2<-as.data.frame(data1) 
   dplyr::tbl_df(data2)
 }
@@ -85,7 +87,6 @@ fars_map_state <- function(state.num, year) {
 
 
 fars_map_state(1,2013)
-
 
 
 
